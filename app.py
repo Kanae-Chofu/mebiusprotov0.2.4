@@ -1,6 +1,9 @@
 import sys
 print(sys.executable)
 
+from dotenv import load_dotenv
+load_dotenv()
+
 import streamlit as st
 import sqlite3
 from modules.user import (
