@@ -5,6 +5,7 @@ import os
 
 from dotenv import load_dotenv
 load_dotenv()
+print("DEBUG:", os.getenv("OPENAI_API_KEY"))
 
 from streamlit_autorefresh import st_autorefresh
 from modules.user import get_current_user, get_display_name
