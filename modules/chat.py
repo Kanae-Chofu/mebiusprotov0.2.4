@@ -2,6 +2,10 @@
 import streamlit as st
 import sqlite3
 import os
+
+from dotenv import load_dotenv
+load_dotenv()
+
 from streamlit_autorefresh import st_autorefresh
 from modules.user import get_current_user, get_display_name
 from modules.utils import now_str
