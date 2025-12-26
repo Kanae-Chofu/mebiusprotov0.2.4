@@ -16,7 +16,7 @@ from modules.user import (
     get_display_name,
     get_kari_id
 )
-from modules import board, karitunagari, chat, profilepagev2
+from modules import board, karitunagari, chat, profilepagev2,chat2
 from modules.utils import now_str
 
 # --- 初期設定 ---
@@ -101,7 +101,7 @@ elif space == "仮つながりスペース":
     karitunagari.render()
 
 elif space == "1対1チャット":
-    chat.render()
+    chat2.render()
 
 elif space == "プロフィール":
     profilepagev2.render()  # ← ログインユーザーを渡す
