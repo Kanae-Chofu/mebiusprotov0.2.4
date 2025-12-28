@@ -107,35 +107,45 @@ def get_stamp_images():
     return [os.path.join(stamp_dir, f) for f in os.listdir(stamp_dir) if f.lower().endswith((".png", ".jpg", ".jpeg", ".gif"))]
 
 # --- AI応答（HTTP版） ---
+# --- AI応答（Claude API版） ---
 def generate_ai_response(user):
+    from dotenv import load_dotenv
+    import os
+    import requests
+
+    load_dotenv()
+    CLAUDE_API_KEY = os.getenv("CLAUDE_API_KEY")
+    if not CLAUDE_API_KEY:
+        raise RuntimeError("環境変数 CLAUDE_API_KEY が設定されていません")
+
     messages = get_messages(user, AI_NAME)
     last_msg = messages[-1][1] if messages else "こんにちは！"
 
-    url = "https://api.openai.com/v1/chat/completions"
+    url = "https://api.anthropic.com/v1/complete"
     headers = {
-        "Authorization": f"Bearer {OPENAI_API_KEY}",
+        "x-api-key": CLAUDE_API_KEY,
         "Content-Type": "application/json",
     }
-    if OPENAI_PROJECT_ID:
-        headers["OpenAI-Project"] = OPENAI_PROJECT_ID
+
+    # Claudeでは "prompt" に人間の発言とAIの応答をまとめて書く
+    prompt = f"HUMAN: {last_msg}\n\nAI:"
 
     payload = {
-        "model": "gpt-5-nano",
-        "messages": [
-            {"role": "system", "content": "あなたは親切なチャットAIです。ユーザーの発言に自然に返答してください。"},
-            {"role": "user", "content": last_msg}
-        ],
-        "max_tokens": 150,
-        "temperature": 0.7
+        "model": "claude-3.0",  # 最新モデルに置き換え可
+        "prompt": prompt,
+        "max_tokens_to_sample": 200,
+        "temperature": 0.7,
+        "stop_sequences": ["HUMAN:", "AI:"]  # 会話区切り用
     }
 
     try:
         r = requests.post(url, json=payload, headers=headers)
         r.raise_for_status()
         data = r.json()
-        return data["choices"][0]["message"]["content"].strip()
+        return data["completion"].strip()
     except Exception as e:
         return f"AI応答でエラーが発生しました: {e}"
+
 
 # --- メインUI ---
 def render():
