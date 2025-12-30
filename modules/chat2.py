@@ -109,9 +109,9 @@ def get_stamp_images():
 # --- AI応答（HTTP版） ---
 # --- AI応答（Claude API版 / 新API） ---
 def generate_ai_response(user):
-    from dotenv import load_dotenv
     import os
     import requests
+    from dotenv import load_dotenv
 
     load_dotenv()
     CLAUDE_API_KEY = os.getenv("CLAUDE_API_KEY")
@@ -120,28 +120,31 @@ def generate_ai_response(user):
 
     messages = get_messages(user, AI_NAME)
 
-    # Claude用 messages 形式に変換
     claude_messages = []
-    for role, content in messages:
-        if role == "user":
+
+    for sender, msg, msg_type in messages:
+        if msg_type != "text":
+            continue  # スタンプは無視（重要）
+
+        if sender == user:
             claude_messages.append({
                 "role": "user",
-                "content": content
+                "content": msg
             })
         else:
-            # Claudeには system / assistant role がないので user に統合
+            # AIの過去発言は assistant として渡す
             claude_messages.append({
-                "role": "user",
-                "content": content
+                "role": "assistant",
+                "content": msg
             })
 
     if not claude_messages:
-        claude_messages = [{"role": "user", "content": "こんにちは！"}]
+        claude_messages = [{"role": "user", "content": "おはよ"}]
 
     url = "https://api.anthropic.com/v1/messages"
     headers = {
         "x-api-key": CLAUDE_API_KEY,
-        "anthropic-version": "2023-06-01",  # ← 必須
+        "anthropic-version": "2023-06-01",
         "content-type": "application/json",
     }
 
