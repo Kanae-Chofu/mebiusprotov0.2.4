@@ -107,7 +107,7 @@ def get_stamp_images():
     return [os.path.join(stamp_dir, f) for f in os.listdir(stamp_dir) if f.lower().endswith((".png", ".jpg", ".jpeg", ".gif"))]
 
 # --- AI応答（HTTP版） ---
-# --- AI応答（Claude API版） ---
+# --- AI応答（Claude API版 / 新API） ---
 def generate_ai_response(user):
     from dotenv import load_dotenv
     import os
@@ -119,30 +119,44 @@ def generate_ai_response(user):
         raise RuntimeError("環境変数 CLAUDE_API_KEY が設定されていません")
 
     messages = get_messages(user, AI_NAME)
-    last_msg = messages[-1][1] if messages else "こんにちは！"
 
-    url = "https://api.anthropic.com/v1/complete"
+    # Claude用 messages 形式に変換
+    claude_messages = []
+    for role, content in messages:
+        if role == "user":
+            claude_messages.append({
+                "role": "user",
+                "content": content
+            })
+        else:
+            # Claudeには system / assistant role がないので user に統合
+            claude_messages.append({
+                "role": "user",
+                "content": content
+            })
+
+    if not claude_messages:
+        claude_messages = [{"role": "user", "content": "こんにちは！"}]
+
+    url = "https://api.anthropic.com/v1/messages"
     headers = {
         "x-api-key": CLAUDE_API_KEY,
-        "Content-Type": "application/json",
+        "anthropic-version": "2023-06-01",  # ← 必須
+        "content-type": "application/json",
     }
 
-    # Claudeでは "prompt" に人間の発言とAIの応答をまとめて書く
-    prompt = f"HUMAN: {last_msg}\n\nAI:"
-
     payload = {
-        "model": "claude-3.0",  # 最新モデルに置き換え可
-        "prompt": prompt,
-        "max_tokens_to_sample": 200,
+        "model": "claude-3-5-sonnet-20241022",
+        "max_tokens": 200,
         "temperature": 0.7,
-        "stop_sequences": ["HUMAN:", "AI:"]  # 会話区切り用
+        "messages": claude_messages
     }
 
     try:
         r = requests.post(url, json=payload, headers=headers)
         r.raise_for_status()
         data = r.json()
-        return data["completion"].strip()
+        return data["content"][0]["text"].strip()
     except Exception as e:
         return f"AI応答でエラーが発生しました: {e}"
 
