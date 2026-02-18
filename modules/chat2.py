@@ -149,11 +149,20 @@ def generate_ai_response(user):
     }
 
     try:
-        r = requests.post(url, json=payload, headers=headers)
+        print(f"[DEBUG] API リクエスト送信: {url}")
+        print(f"[DEBUG] モデル: {payload['model']}")
+        print(f"[DEBUG] APIキー: {CLAUDE_API_KEY[:20]}...")
+        r = requests.post(url, json=payload, headers=headers, timeout=10)
+        print(f"[DEBUG] ステータスコード: {r.status_code}")
         r.raise_for_status()
         data = r.json()
         return data["content"][0]["text"].strip()
+    except requests.exceptions.RequestException as e:
+        print(f"[ERROR] リクエストエラー: {e}")
+        print(f"[ERROR] レスポンス: {e.response.text if hasattr(e, 'response') else 'N/A'}")
+        return f"AI応答でエラーが発生しました: {e}"
     except Exception as e:
+        print(f"[ERROR] 予期しないエラー: {type(e).__name__}: {e}")
         return f"AI応答でエラーが発生しました: {e}"
 
 
