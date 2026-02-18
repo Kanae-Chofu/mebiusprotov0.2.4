@@ -145,6 +145,7 @@ def generate_ai_response(user):
         "model": "claude-3-haiku-20240307",
         "max_tokens": 200,
         "temperature": 0.7,
+        "system": "今日は2026年2月19日です。あなたは親切で知識豊富なアシスタン年です。ユーザーと自然な会話を通じて、様々なトピックについて情報提供や相談対応をしてください。",
         "messages": claude_messages
     }
 
