@@ -6,7 +6,6 @@ import requests
 from dotenv import load_dotenv
 
 load_dotenv()
-print("DEBUG:", os.getenv("OPENAI_API_KEY"))
 
 from streamlit_autorefresh import st_autorefresh
 from modules.user import get_current_user, get_display_name
@@ -30,12 +29,6 @@ from modules.feedback import (
 AI_NAME = "Mebius AI"
 STAMPS = ["😀", "😂", "❤️", "👍", "😢", "🎉", "🔥", "🤔"]
 DB_PATH = "db/mebius.db"
-
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-OPENAI_PROJECT_ID = os.getenv("OPENAI_PROJECT_ID")  # 必要に応じて設定
-
-if not OPENAI_API_KEY:
-    raise RuntimeError("環境変数 OPENAI_API_KEY が設定されていません")
 
 # --- DB操作関数 ---
 def init_chat_db():
