@@ -156,13 +156,22 @@ def generate_ai_response(user):
         print(f"[DEBUG] ステータスコード: {r.status_code}")
         r.raise_for_status()
         data = r.json()
-        return data["content"][0]["text"].strip()
+        print(f"[DEBUG] レスポンスデータ: {data}")
+        response_text = data["content"][0]["text"].strip()
+        print(f"[DEBUG] 抽出されたテキスト: {response_text}")
+        return response_text
     except requests.exceptions.RequestException as e:
         print(f"[ERROR] リクエストエラー: {e}")
         print(f"[ERROR] レスポンス: {e.response.text if hasattr(e, 'response') else 'N/A'}")
         return f"AI応答でエラーが発生しました: {e}"
+    except KeyError as e:
+        print(f"[ERROR] レスポンス形式エラー: {e}")
+        print(f"[ERROR] 実際のレスポンス: {data}")
+        return f"レスポンス形式が不正です: {e}"
     except Exception as e:
         print(f"[ERROR] 予期しないエラー: {type(e).__name__}: {e}")
+        import traceback
+        traceback.print_exc()
         return f"AI応答でエラーが発生しました: {e}"
 
 
