@@ -162,7 +162,7 @@ def generate_ai_response(user):
 
     payload = {
         "model": "claude-3-haiku-20240307",
-        "max_tokens": 200, 
+        "max_tokens": 150, 
         "temperature": 0.95, # さらに上げて、予想外の「ノリの良さ」を出す
         "system": (
             "今日は2026年2月19日。君はユーザーと放課後や休日にダラダラしてる「一番仲の良い親友」だよ。\n\n"
