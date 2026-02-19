@@ -104,12 +104,31 @@ def get_stamp_images():
 def generate_ai_response(user):
     import os
     import requests
+    import json
     from dotenv import load_dotenv
 
     load_dotenv()
     CLAUDE_API_KEY = os.getenv("CLAUDE_API_KEY")
     if not CLAUDE_API_KEY:
         raise RuntimeError("環境変数 CLAUDE_API_KEY が設定されていません")
+
+    # system_knowledge.json から情報を読み込む
+    system_prompt = "あなたは親切で知識豊富なアシスタントです。ユーザーと自然な会話をしてください。"
+    try:
+        with open("system_knowledge.json", "r", encoding="utf-8") as f:
+            knowledge = json.load(f)
+            if "system_instruction" in knowledge:
+                system_prompt = knowledge["system_instruction"]
+            if "current_date" in knowledge:
+                system_prompt += f"\n現在の日付は{knowledge['current_date']}です。"
+            if "knowledge_base" in knowledge:
+                system_prompt += "\n\n【背景知識】\n"
+                for kb in knowledge["knowledge_base"]:
+                    system_prompt += f"{kb['category']}:\n"
+                    for item in kb["items"]:
+                        system_prompt += f"- {item}\n"
+    except FileNotFoundError:
+        system_prompt = "あなたは親切で知識豊富なアシスタントです。現在の日付は2026年2月19日です。ユーザーと自然な会話をしてください。"
 
     messages = get_messages(user, AI_NAME)
 
