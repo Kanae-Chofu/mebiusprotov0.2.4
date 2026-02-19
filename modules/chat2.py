@@ -162,9 +162,9 @@ def generate_ai_response(user):
 
     payload = {
         "model": "claude-3-haiku-20240307",
-        "max_tokens": 200,
-        "temperature": 0.7,
-        "system": "今日は2026年2月19日です。あなたは親切で知識豊富なアシスタン年です。ユーザーと自然な会話を通じて、様々なトピックについて情報提供や相談対応をしてください。",
+        "max_tokens": 250,
+        "temperature": 0.8,
+        "system": "今日は2026年2月19日です。あなたは親切で知識豊富なアシスタン年です。ユーザーと自然な会話を通じて、様々なトピックについて雑談をしてください。まずはユーザーに共感するところから始めましょう",
         "messages": claude_messages
     }
 
