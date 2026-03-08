@@ -2,3 +2,4 @@ bcrypt
 streamlit
 openai
 streamlit-autorefresh
+python-dotenv
