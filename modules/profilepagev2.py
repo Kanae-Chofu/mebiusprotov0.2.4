@@ -1,6 +1,7 @@
 import streamlit as st
 from PIL import Image
 from modules.user import get_current_user, get_all_users
+from modules.karitunagari import get_friends
 
 def render():
     st.title("プロフィール画面")
@@ -15,12 +16,15 @@ def render():
         st.session_state.users = {}
 
     # --- 全ユーザー一覧
-    # を取得 ---
-    all_usernames = get_all_users()
+    # を取得 --- ではなく、友達のみ
+    friends = get_friends(current_user)
+    all_usernames = [current_user] + friends  # 自分 + 友達
 
-    # current_user が未登録なら追加
-    if current_user not in all_usernames:
-        all_usernames.append(current_user)
+    # current_user が未登録なら追加（不要かも）
+    # if current_user not in all_usernames:
+    #     all_usernames.append(current_user)
+
+    # --- ユーザー情報を初期化（未登録なら空プロフィールを作成） ---
 
     # --- ユーザー情報を初期化（未登録なら空プロフィールを作成） ---
     for username in all_usernames:
