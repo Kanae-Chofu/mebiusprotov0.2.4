@@ -2,6 +2,7 @@ import streamlit as st
 import sqlite3
 from modules.utils import now_str, sanitize_message
 from modules.user import get_current_user
+from streamlit_autorefresh import st_autorefresh
 
 DB_PATH = "db/mebius.db"
 
@@ -96,6 +97,7 @@ def delete_message(message_id):
 
 # 🖥 UI表示
 def render():
+    st_autorefresh(interval=3000, key="board_refresh")  # 3秒ごとに自動更新
     init_board_db()
     user = get_current_user()
     if not user:
