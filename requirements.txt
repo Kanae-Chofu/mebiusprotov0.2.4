@@ -3,3 +3,4 @@ streamlit
 openai
 streamlit-autorefresh
 python-dotenv
+load_dotenv
