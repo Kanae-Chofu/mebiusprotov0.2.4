@@ -3,6 +3,7 @@ import sqlite3
 import random
 from modules.user import get_current_user, get_kari_id
 from modules.utils import now_str
+from streamlit_autorefresh import st_autorefresh
 
 DB_PATH = "db/mebius.db"
 
@@ -109,6 +110,7 @@ def get_friends(user):
         conn.close()
 
 def render():
+    st_autorefresh(interval=3000, key="kari_refresh")  # 3秒ごとに自動更新
     init_kari_db()
     user = get_current_user()
     if not user:
@@ -149,11 +151,10 @@ def render():
         for sender, msg in messages:
             align = "right" if sender == kari_id else "left"
             bg = "#1F2F54" if align == "right" else "#426AB3"
-            profile_link = f"[{sender}](?space=プロフィール&target_user={sender})"
             st.markdown(
                 f"""<div style='text-align:{align}; margin:5px 0;'>
                 <span style='background-color:{bg}; color:#FFFFFF; padding:8px 12px; border-radius:10px; display:inline-block; max-width:80%;'>
-                {msg}<br><small>{profile_link}</small>
+                {msg}
                 </span></div>""", unsafe_allow_html=True
             )
 
